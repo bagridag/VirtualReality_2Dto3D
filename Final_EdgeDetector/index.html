@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <title>OpenSeaDragon Test</title>
+    Threshold: <input type="number" name="threshold" id="threshold"><br>
+
+</head>
+<body>
+<div id="openseadragon1" style="width: 800px; height: 600px;"></div>
+<script src="https://openseadragon.github.io/openseadragon/openseadragon.min.js"></script>
+<script src="openseadragon-bin-2.2.1/openseadragon.js"></script>
+<script src="jquery-3.2.1.js"></script>
+<script src="openseadragon-filtering.js"></script>
+
+
+
+
+<input type="file" id="i_file" value="">
+<!--<input type="button" id="i_submit" value="Submit"> -->
+
+
+<!--<form id="myForm" action="/index.html"> -->
+
+<!--<input type="button" onclick="process()" value="Submit threshold">-->
+<!-- </form> -->
+
+<script>
+    var path;
+    $('#i_file').change( function(event) {
+        var tmppath = URL.createObjectURL(event.target.files[0]);
+        path=tmppath;
+        $("img").fadeIn("fast").attr('src',URL.createObjectURL(event.target.files[0]));
+        var threshold = document.getElementById('threshold').value;
+
+
+        var viewer = OpenSeadragon({
+            id: "openseadragon1",
+            prefixUrl: "/https://github.com/openseadragon/openseadragon/tree/master/images",
+            tileSources: {
+                type: 'image',
+                url: path,
+                crossOriginPolicy: 'Anonymous',
+                buildPyramid: false,
+                ajaxWithCredentials: false
+            },
+            crossOriginPolicy: 'Anonymous'
+
+        });
+
+    });
+
+      //  function process() {
+            $('#threshold').change( function(event) {
+
+
+           // location.reload();
+           // var threshold = document.getElementById('threshold').value;
+                var threshold =  $('#threshold').val();
+            var viewer = OpenSeadragon({
+                id: "openseadragon1",
+                prefixUrl: "/https://github.com/openseadragon/openseadragon/tree/master/images",
+                tileSources: {
+                    type: 'image',
+                    url: path,
+                    crossOriginPolicy: 'Anonymous',
+                    buildPyramid: false,
+                    ajaxWithCredentials: false
+                },
+                crossOriginPolicy: 'Anonymous'
+
+            });
+                
+          //
+            viewer.setFilterOptions({
+                filters: {
+                    processors: [
+                        OpenSeadragon.Filters.GREYSCALE(),
+                        OpenSeadragon.Filters.THRESHOLDING(threshold),
+                        OpenSeadragon.Filters.MORPHOLOGICAL_OPERATION(3, Math.max),
+                        OpenSeadragon.Filters.INVERT(),
+                        OpenSeadragon.Filters.MORPHOLOGICAL_OPERATION(3, Math.min),
+                        OpenSeadragon.Filters.INVERT()
+
+
+                        // OpenSeadragon.Filters.EDGE_DETECTOR()
+                        //  OpenSeadragon.Filters.INVERT()
+                    ]
+                },
+                loadMode: 'sync'
+            });
+        });
+
+</script>
